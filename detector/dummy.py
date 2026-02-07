@@ -5,7 +5,6 @@ from .base import DetectorBase, Detection
 class DummyDetector(DetectorBase):
     def infer(self, frame_bgr) -> List[Detection]:
         h, w = frame_bgr.shape[:2]
-        # bbox in center, size depends on image
         bw, bh = int(w * 0.08), int(h * 0.08)
         x1 = (w - bw) // 2
         y1 = (h - bh) // 2
