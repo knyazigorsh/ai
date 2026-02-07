@@ -1,0 +1,89 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+*.so
+*.dll
+*.egg-info/
+.eggs/
+build/
+dist/
+pip-wheel-metadata/
+.pytest_cache/
+.mypy_cache/
+.pyre/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# === IDEs / Editors ===
+.vscode/
+.idea/
+*.iml
+
+# === OS files ===
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# === Jupyter ===
+.ipynb_checkpoints/
+
+# === Logs / temp ===
+*.log
+*.tmp
+*.bak
+
+# === Project local config (do not commit secrets/paths) ===
+.env
+.env.*
+config.local.py
+local_settings.py
+
+# === Data / outputs (keep large files out of git) ===
+data/
+datasets/
+videos/
+frames/
+labels/
+runs/
+outputs/
+out/
+weights/
+checkpoints/
+models/
+*.onnx
+*.engine
+*.pt
+*.pth
+*.ckpt
+
+# === Media outputs ===
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tif
+*.tiff
+
+# === CUDA / CuPy caches ===
+cupy_cache/
+**/cupy_cache/
+.cuda/
+nv/
+*.cubin
+*.ptx
+
+# === Windows-specific Python launcher / executables ===
+*.exe
+*.msi
