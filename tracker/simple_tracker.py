@@ -5,11 +5,11 @@ from .iou import iou_xyxy
 @dataclass
 class Track:
     tid: int
-    bbox: Tuple[float, float, float, float]  # xyxy
+    bbox: Tuple[float, float, float, float]
     conf: float
-    age: int = 0          # total frames seen
-    lost: int = 0         # frames since last matched
-    hit_history: List[int] = field(default_factory=list)  # 1/0 per frame
+    age: int = 0
+    lost: int = 0
+    hit_history: List[int] = field(default_factory=list)
     confirmed: bool = False
 
 class SimpleTracker:
@@ -27,13 +27,11 @@ class SimpleTracker:
         return sum(tr.hit_history[-self.confirm_window:]) >= self.confirm_hits
 
     def update(self, dets_xyxy_conf: List[Tuple[Tuple[float,float,float,float], float]]) -> List[Track]:
-        # mark all existing tracks as not matched this frame (hit=0 by default)
         for tr in self.tracks:
             tr.age += 1
             tr.lost += 1
             tr.hit_history.append(0)
 
-        # greedy matching by IoU (simple but works as a starting point)
         unmatched_dets = list(range(len(dets_xyxy_conf)))
         for tr in self.tracks:
             best_j = -1
@@ -52,7 +50,6 @@ class SimpleTracker:
                 tr.hit_history[-1] = 1
                 unmatched_dets.remove(best_j)
 
-        # create new tracks for unmatched detections
         for j in unmatched_dets:
             bbox_j, conf_j = dets_xyxy_conf[j]
             tr = Track(
@@ -66,10 +63,8 @@ class SimpleTracker:
             self._next_id += 1
             self.tracks.append(tr)
 
-        # drop dead tracks
         self.tracks = [t for t in self.tracks if t.lost <= self.max_lost]
 
-        # attach confirmed flag dynamically (optional, for UI)
         for tr in self.tracks:
             tr.confirmed = self._is_confirmed(tr)  # type: ignore[attr-defined]
         return self.tracks
