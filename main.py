@@ -44,10 +44,8 @@ def main():
         if not ok:
             break
 
-        # --- detect ---
         dets = detector.infer(frame)
 
-        # filter by conf + area
         det_list = []
         for d in dets:
             if d.conf < cfg.det_conf:
@@ -58,10 +56,8 @@ def main():
                 continue
             det_list.append(((x1, y1, x2, y2), d.conf))
 
-        # --- track ---
         tracks = tracker.update(det_list)
 
-        # --- draw ---
         draw_tracks(frame, tracks)
 
         if cfg.draw_fps:
@@ -78,7 +74,7 @@ def main():
         if cfg.show:
             cv2.imshow("drone-tracker", frame)
             key = cv2.waitKey(1) & 0xFF
-            if key == 27:  # ESC
+            if key == 27:
                 break
 
     cap.release()
