@@ -16,7 +16,6 @@ class BaseDetector(DetectorBase):
         self.stride = stride
         self.conf_thr = conf_thr
 
-        # пример: MLP вход = cell*cell (grayscale), скрытый 64, выход 1
         in_dim = cell * cell
         hidden = 64
         rng = cp.random.default_rng(seed)
@@ -26,20 +25,17 @@ class BaseDetector(DetectorBase):
         self.b2 = cp.zeros((1, 1), dtype=cp.float32)
 
     def _mlp(self, X):
-        # X: (N, in_dim) float32 on GPU
         Z1 = X @ self.W1 + self.b1
         A1 = relu(Z1)
         Z2 = A1 @ self.W2 + self.b2
-        P = sigmoid(Z2)  # (N,1)
+        P = sigmoid(Z2)
         return P
 
     def infer(self, frame_bgr) -> List[Detection]:
         h, w = frame_bgr.shape[:2]
 
-        # 1) grayscale + resize? (оставим как есть)
         gray = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2GRAY)
 
-        # 2) нарезаем клетки
         patches = []
         coords = []
         for y in range(0, h - self.cell + 1, self.stride):
@@ -51,16 +47,13 @@ class BaseDetector(DetectorBase):
         if not patches:
             return []
 
-        # 3) batch на GPU: (N, cell*cell), нормализация 0..1
         X = cp.asarray(cp.stack([cp.asarray(p) for p in patches])).astype(cp.float32) / cp.float32(255.0)
         X = X.reshape(X.shape[0], -1)
 
-        # 4) инференс
-        P = self._mlp(X).reshape(-1)  # (N,)
+        P = self._mlp(X).reshape(-1)
 
-        # 5) обратно в Detection
         dets: List[Detection] = []
-        P_cpu = P.get()  # переносим только вероятности
+        P_cpu = P.get()
         for (x, y), conf in zip(coords, P_cpu):
             if conf >= self.conf_thr:
                 dets.append(Detection(x, y, x + self.cell, y + self.cell, conf=float(conf), cls=0))
