@@ -2,7 +2,7 @@ import time
 import cv2
 
 from config import Config
-from detector import DummyDetector
+from detector import BaseDetector
 from tracker import SimpleTracker
 from utils.draw import draw_tracks
 
@@ -28,7 +28,7 @@ def main():
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         writer = cv2.VideoWriter(cfg.out_path, fourcc, fps_in, (w, h))
 
-    detector = DummyDetector()
+    detector = BaseDetector()
     tracker = SimpleTracker(
         iou_match=cfg.iou_match,
         max_lost=cfg.max_lost,

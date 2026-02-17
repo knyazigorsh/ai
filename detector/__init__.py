@@ -1,1 +1,1 @@
-from .dummy import DummyDetector
+from .BaseDetector import BaseDetector
